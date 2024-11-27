@@ -21,17 +21,18 @@ class ControlsSystem
     vector<Control> controls;
 
 public:
+    // builds all the controls
     void buildControls()
     {
-        Control c1 = {1,"slider","visible"};
-        Control c2 = {2,"slider","invisible"};
-        Control c3 = {3,"slider","disable"};
+        Control c1 = {1,"button","visible"};
+        Control c2 = {2,"slider","visible"};
+        Control c3 = {3,"button","disable"};
         Control c4 = {4,"slider","visible"};
         Control c5 = {5,"slider","invisible"};
         Control c6 = {6,"button","visible"};
-        Control c7 = {7,"button","invisible"};
+        Control c7 = {7,"slider","invisible"};
         Control c8 = {8,"button","disable"};
-        Control c9 = {9,"button","disable"};
+        Control c9 = {9,"slider","disable"};
         Control c10 = {10,"button","invisible"};
 
         controls.push_back(c1);
@@ -50,14 +51,14 @@ public:
     // prints all the controls in the system
     void getAllControls()
     {
-       // cout << "In get all control method" << endl;
+        cout << "Controllers are : " << endl;
         for(Control control : controls)
         {
             control.details();
         }
     }
-
-    void findTargetId(int id)
+    // gets the details of given id
+    void getDetailsForId(int id)
     {
         auto targetContorl = find_if(controls.begin(),controls.end(),
                                      [id](Control &c){return c.id == id;});
@@ -70,27 +71,26 @@ public:
         }
         else
         {
-            cout << "id " << id <<  " not found in controls " << endl;
+            cout << "Id " << id <<  " not found in controls " << endl;
         }
     }
 
     // finds the first invisible control
-    void findFirstInvisibleControl()
+    void getFirstInvisibleControl()
     {
         auto firstInvisibleControl = find_if(controls.begin(),controls.end(),
                                            [](Control &c){return c.state == "invisible";});
         if(firstInvisibleControl != controls.end())
         {
-            cout << "first invisible control details are  ";
+            cout << "First invisible control details are :";
             firstInvisibleControl->details();
-            cout << endl;
         }
         else
         {
             cout << "no invisible control present " << endl;
         }
     }
-
+     // gets the details of given id
     void findIfAdjacentStateAreEqual()
     {
         auto adjacentStates = adjacent_find(controls.begin(),controls.end(),
@@ -108,16 +108,16 @@ public:
     }
     int countVisibleControls()
     {
-        int count = 0;
-        for(auto c : controls)
-        {
-            if(c.state == "visible")
-            {
-                count++;
-            }
-        }
-        return count;
+        auto countVisibles = count_if(controls.begin(),controls.end(),[](Control& c){return c.state == "visible";});
+        return countVisibles;
+
     }
+    int countDisabledSliders()
+    {
+        auto disabledSliders = count_if(controls.begin(),controls.end(),[](Control &c){return c.type=="slider" && c.state == "disable"; });
+        return disabledSliders;
+    }
+
 };
 
 int main()
@@ -125,39 +125,21 @@ int main()
 
 
     ControlsSystem c;
-    c.buildControls();
-    c.getAllControls();
-   // c.getAllControls();
-    c.findFirstInvisibleControl();
-    c.findTargetId(7);
-    c.findTargetId(20);
-    c.findIfAdjacentStateAreEqual();
-    cout << c.countVisibleControls() << endl;
+    c.buildControls(); // builds all the controls
 
+    c.getAllControls(); // prints all the controls
 
-    // Task 1: Working with STL Algorithms
-// Goal: Practice commonly used STL algorithms in the context of managing HMI control states (e.g., button visibility, slider values).
-// Scenario:
-// Imagine an HMI dashboard with buttons and sliders. Each control has a unique ID and a state (visible, invisible, disabled).
-// Steps:
-// Define the data structure:
-// Create a struct Control:
-// cppCopy codestruct Control {    int id;               // Unique ID    std::string type;     // "button" or "slider"    std::string state;    // "visible", "invisible", "disabled"};
-// Initialize the container:
-// Create a std::vector<Control> and populate it with sample controls (5 buttons and 5 sliders).
-// Use the following algorithms:
-// std::for_each: Iterate through all controls and print their details.
-// std::find: Find a control with a specific ID.
-// std::find_if: Find the first invisible control.
-// std::adjacent_find: Check for consecutive controls with the same state.
-// std::count: Count the number of visible controls.
-// std::count_if: Count sliders that are disabled.
-// std::equal: Compare two subranges of controls to check if they are identical.
-// Implementation Example:
-// cppCopy codeauto invisibleControl = std::find_if(controls.begin(), controls.end(),    [](const Control& ctrl) { return ctrl.state == "invisible"; });
-// Output Results:
-// Print the results of each algorithm in a user-friendly format.
+    c.getFirstInvisibleControl(); // finds the fisrt occurence of invisible control
 
+    c.getDetailsForId(7); // gets the details of given id
+
+    c.getDetailsForId(20); // if id not present
+
+    c.findIfAdjacentStateAreEqual();// find the details of two adjecent controls which are equal state
+
+    cout << "count of visible Controls :"<< c.countVisibleControls() << endl;
+
+    cout << "count of disabled sliders :"<< c.countDisabledSliders() << endl;
 
 
     return 0;
